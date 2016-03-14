@@ -4,7 +4,7 @@ import sys
 import os 
 import ConfigParser
 import MySQLdb as mdb
-import logging
+# import logging
 import glob
 
 LOGFILE = './upgrDB.log'
@@ -16,8 +16,11 @@ def main():
 	ListFiles = []
 	ListOfTables = []
 
-	config = ConfigParser.RawConfigParser()
-	config.read(CONFIGFILE)
+	print os.environ["MYSQL_ENV_HOST"]
+
+
+	# config = ConfigParser.RawConfigParser()
+	# config.read(CONFIGFILE)
 
 	# logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO, filename = LOGFILE)
 	
@@ -55,9 +58,9 @@ def main():
 	# print(ListOfKey)
 
 	try:
-		con = mdb.connect(config.get('mysql','host'), config.get('mysql','user'), config.get('mysql','password'), config.get('mysql','database'))
+		con = mdb.connect(os.environ["MYSQL_ENV_HOST"], os.environ["MYSQL_ENV_USER"], os.environ["MYSQL_ENV_PASSWORD"], os.environ["MYSQL_ENV_DATABASE"])
 		cur = con.cursor()
-		sqlsa="select * from "+config.get('mysql','database')+".version;"
+		sqlsa="select * from "+os.environ["MYSQL_ENV_DATABASE"]+".version;"
 		cur.execute(sqlsa)
 		outsql = cur.fetchall()
 		con.commit()
@@ -89,7 +92,7 @@ def main():
 				ListFiles.append(FileName+'.'+FileVer)
 
 	ListFiles.sort()
-	logging.info("Find "+str(len(ListFiles))+"new scripts")
+	print("Find "+str(len(ListFiles))+" new scripts")
 	print("List of new scripts: ") 
 
 	# print(ListFiles)
